@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "title": "Complete project presentation",
+    "description": "Prepare slides and practice the quarterly project review presentation for the team meeting",
+    "completed": false,
+    "createdAt": "2024-01-15T09:00:00Z",
+    "updatedAt": "2024-01-15T09:00:00Z"
+  },
+  {
+    "Id": 2,
+    "title": "Buy groceries",
+    "description": "Milk, bread, eggs, and vegetables for the week",
+    "completed": true,
+    "createdAt": "2024-01-14T08:30:00Z",
+    "updatedAt": "2024-01-15T10:15:00Z"
+  },
+  {
+    "Id": 3,
+    "title": "Schedule dentist appointment",
+    "description": "Call Dr. Smith's office to schedule a routine cleaning appointment",
+    "completed": false,
+    "createdAt": "2024-01-13T16:45:00Z",
+    "updatedAt": "2024-01-13T16:45:00Z"
+  },
+  {
+    "Id": 4,
+    "title": "Review code changes",
+    "description": "Go through the pull requests from the development team and provide feedback",
+    "completed": false,
+    "createdAt": "2024-01-15T11:20:00Z",
+    "updatedAt": "2024-01-15T11:20:00Z"
+  },
+  {
+    "Id": 5,
+    "title": "Plan weekend trip",
+    "description": "Research destinations and book accommodation for the upcoming long weekend",
+    "completed": false,
+    "createdAt": "2024-01-12T14:30:00Z",
+    "updatedAt": "2024-01-12T14:30:00Z"
+  }
+]
