@@ -9,15 +9,16 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Modal from "@/components/atoms/Modal";
 import DeleteConfirmation from "@/components/molecules/DeleteConfirmation";
-
+import EditTaskModal from "@/components/organisms/EditTaskModal";
 const TaskList = ({ onAddTask }) => {
-  const [tasks, setTasks] = useState([]);
+const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
   const loadTasks = async () => {
     try {
       setError("");
@@ -37,7 +38,7 @@ const TaskList = ({ onAddTask }) => {
   }, []);
 
   const handleToggleComplete = async (taskId) => {
-    try {
+try {
       const updatedTask = await taskService.toggleComplete(taskId);
       
       setTasks(prevTasks =>
@@ -55,6 +56,27 @@ const TaskList = ({ onAddTask }) => {
       console.error("Error updating task:", err);
       toast.error("Failed to update task");
     }
+  };
+
+  const handleEditClick = (taskId) => {
+    const task = tasks.find(t => t.Id === taskId);
+    if (task) {
+      setTaskToEdit(task);
+      setEditModalOpen(true);
+    }
+  };
+
+  const handleTaskUpdated = (updatedTask) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.Id === updatedTask.Id ? updatedTask : task
+      )
+    );
+  };
+
+  const handleEditModalClose = () => {
+    setEditModalOpen(false);
+    setTaskToEdit(null);
   };
 
   const handleDeleteClick = (taskId) => {
@@ -118,11 +140,12 @@ const TaskList = ({ onAddTask }) => {
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
           {tasks.map((task) => (
-            <TaskCard
+<TaskCard
               key={task.Id}
               task={task}
               onToggleComplete={handleToggleComplete}
               onDelete={handleDeleteClick}
+              onEdit={handleEditClick}
             />
           ))}
         </AnimatePresence>
@@ -142,7 +165,15 @@ const TaskList = ({ onAddTask }) => {
           onCancel={handleDeleteCancel}
           loading={deleteLoading}
         />
-      </Modal>
+</Modal>
+
+      {/* Edit Task Modal */}
+      <EditTaskModal
+        isOpen={editModalOpen}
+        onClose={handleEditModalClose}
+        task={taskToEdit}
+        onTaskUpdated={handleTaskUpdated}
+      />
     </>
   );
 };

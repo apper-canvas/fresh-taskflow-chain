@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 
-const TaskCard = ({ task, onToggleComplete, onDelete }) => {
+const TaskCard = ({ task, onToggleComplete, onDelete, onEdit }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -63,22 +63,26 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
         </div>
         
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <h3 className={cn(
-            "text-lg font-semibold text-gray-900 mb-2 transition-all duration-200",
-            task.completed && "task-completed"
-          )}>
-            {task.title}
-          </h3>
-          
-          {task.description && (
-            <p className={cn(
-              "text-gray-600 text-sm leading-relaxed transition-all duration-200",
+<div className="flex-1 min-w-0">
+          <div className="group cursor-pointer" onClick={() => onEdit?.(task.Id)}>
+            <h3 className={cn(
+              "text-lg font-semibold text-gray-900 mb-2 transition-all duration-200",
+              "group-hover:text-indigo-600",
               task.completed && "task-completed"
             )}>
-              {task.description}
-            </p>
-          )}
+              {task.title}
+            </h3>
+            
+            {task.description && (
+              <p className={cn(
+                "text-gray-600 text-sm leading-relaxed transition-all duration-200",
+                "group-hover:text-gray-700",
+                task.completed && "task-completed"
+              )}>
+                {task.description}
+              </p>
+            )}
+          </div>
           
           {/* Task metadata */}
           <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
@@ -100,20 +104,37 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
         
         {/* Delete button */}
         <div className="flex-shrink-0">
-          <motion.div
-            initial={false}
-            animate={{ opacity: isHovered ? 1 : 0.5 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              icon="Trash2"
-              onClick={handleDelete}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
-              aria-label="Delete task"
-            />
-          </motion.div>
+<div className="flex gap-1">
+            <motion.div
+              initial={false}
+              animate={{ opacity: isHovered ? 1 : 0.5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                icon="Edit3"
+                onClick={() => onEdit?.(task.Id)}
+                className="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-2"
+                aria-label="Edit task"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={false}
+              animate={{ opacity: isHovered ? 1 : 0.5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                icon="Trash2"
+                onClick={handleDelete}
+                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
+                aria-label="Delete task"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>

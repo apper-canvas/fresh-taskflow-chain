@@ -3,9 +3,9 @@ import Input from "@/components/atoms/Input";
 import TextArea from "@/components/atoms/TextArea";
 import Button from "@/components/atoms/Button";
 
-const TaskForm = ({ onSubmit, onCancel, loading = false }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+const TaskForm = ({ onSubmit, onCancel, loading = false, initialData = {}, mode = "create" }) => {
+  const [title, setTitle] = useState(initialData.title || "");
+  const [description, setDescription] = useState(initialData.description || "");
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -34,16 +34,18 @@ const TaskForm = ({ onSubmit, onCancel, loading = false }) => {
       return;
     }
     
-    try {
+try {
       await onSubmit({
         title: title.trim(),
         description: description.trim()
       });
       
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setErrors({});
+      // Reset form only in create mode
+      if (mode === "create") {
+        setTitle("");
+        setDescription("");
+        setErrors({});
+      }
     } catch (error) {
       console.error("Error submitting task:", error);
     }
@@ -99,11 +101,11 @@ const TaskForm = ({ onSubmit, onCancel, loading = false }) => {
       <div className="flex gap-3 pt-2">
         <Button
           type="submit"
-          disabled={!isFormValid || loading}
+disabled={!isFormValid || loading}
           loading={loading}
           className="flex-1"
         >
-          {loading ? "Creating..." : "Create Task"}
+          {loading ? (mode === "edit" ? "Updating..." : "Creating...") : (mode === "edit" ? "Update Task" : "Create Task")}
         </Button>
         
         <Button
