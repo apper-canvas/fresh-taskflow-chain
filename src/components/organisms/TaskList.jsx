@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { taskService } from "@/services/api/taskService";
+import ApperIcon from "@/components/atoms/ApperIcon";
 import Modal from "@/components/atoms/Modal";
 import EditTaskModal from "@/components/organisms/EditTaskModal";
 import TaskCard from "@/components/molecules/TaskCard";
@@ -10,7 +11,6 @@ import DeleteConfirmation from "@/components/molecules/DeleteConfirmation";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Loading from "@/components/ui/Loading";
-import ApperIcon from "@/components/atoms/ApperIcon";
 const TaskList = ({ onAddTask }) => {
 const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,8 @@ const [tasks, setTasks] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+
   const loadTasks = async () => {
     try {
       setError("");
@@ -119,11 +121,15 @@ try {
   };
 
 // Filter tasks based on active filter
-  const filteredTasks = taskService.filterTasks(tasks, activeFilter);
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const totalTasks = tasks.length;
+  // Apply search filter first, then category filter
+  const searchFilteredTasks = searchTerm.trim() 
+    ? taskService.searchTasks(tasks, searchTerm)
+    : tasks;
+  const filteredTasks = taskService.filterTasks(searchFilteredTasks, activeFilter);
+  
+  const completedTasks = searchFilteredTasks.filter(task => task.completed).length;
+  const totalTasks = searchFilteredTasks.length;
   const filteredCompletedTasks = filteredTasks.filter(task => task.completed).length;
-
   if (loading) {
     return <Loading />;
   }
@@ -146,6 +152,30 @@ return (
         filteredCompletedTasks={filteredCompletedTasks}
         activeFilter={activeFilter}
       />
+
+{/* Search Bar */}
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-card p-4 border border-white/20 mb-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <ApperIcon name="Search" className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search tasks by title, description, or category..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-white/50 backdrop-blur-sm"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <ApperIcon name="X" className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Filter Buttons */}
       <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-card p-4 border border-white/20 mb-6">

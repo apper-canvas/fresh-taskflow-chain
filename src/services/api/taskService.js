@@ -136,6 +136,37 @@ return { ...updatedTask };
   },
 
   // Filter tasks based on criteria
+async searchTasks(tasks, searchTerm) {
+    if (!searchTerm || !searchTerm.trim()) {
+      return [...tasks];
+    }
+    
+    const term = searchTerm.toLowerCase().trim();
+    const { categoryService } = await import('./categoryService');
+    
+    return tasks.filter(task => {
+      // Search in title
+      const titleMatch = task.title?.toLowerCase().includes(term);
+      
+      // Search in description  
+      const descriptionMatch = task.description?.toLowerCase().includes(term);
+      
+      // Search in category name (need to resolve category name from ID)
+      let categoryMatch = false;
+      if (task.categoryId) {
+        try {
+          const category = categoryService.getById(task.categoryId);
+          categoryMatch = category?.name?.toLowerCase().includes(term);
+        } catch (error) {
+          // Category not found, no match
+          categoryMatch = false;
+        }
+      }
+      
+      return titleMatch || descriptionMatch || categoryMatch;
+    });
+  },
+
   filterTasks(tasks, filterType) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
