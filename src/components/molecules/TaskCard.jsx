@@ -28,10 +28,10 @@ const TaskCard = ({ task, onToggleComplete, onDelete, onEdit }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className={cn(
+className={cn(
         "bg-white/70 backdrop-blur-sm rounded-2xl shadow-card p-6 border border-white/20",
         "hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200",
-task.completed && "opacity-75"
+        task.completed && "opacity-75"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -83,6 +83,21 @@ task.completed && "opacity-75"
               </p>
             )}
 </div>
+{/* Priority badge */}
+          <div className={cn(
+            "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold",
+            task.priority === "High" && "bg-red-100 text-red-800 border border-red-200",
+            task.priority === "Medium" && "bg-orange-100 text-orange-800 border border-orange-200",
+            task.priority === "Low" && "bg-green-100 text-green-800 border border-green-200"
+          )}>
+            <div className={cn(
+              "w-1.5 h-1.5 rounded-full mr-1.5",
+              task.priority === "High" && "bg-red-500",
+              task.priority === "Medium" && "bg-orange-500",
+              task.priority === "Low" && "bg-green-500"
+            )} />
+            {task.priority}
+          </div>
           
           {/* Task metadata */}
           <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">

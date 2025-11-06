@@ -52,6 +52,7 @@ async create(taskData) {
       title: taskData.title,
       description: taskData.description || "",
       dueDate: taskData.dueDate || null,
+      priority: taskData.priority || "Medium",
       completed: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -74,6 +75,7 @@ async create(taskData) {
     const updatedTask = {
 ...tasks[taskIndex],
       ...updates,
+      priority: updates.priority || tasks[taskIndex].priority,
       updatedAt: new Date().toISOString()
     };
     

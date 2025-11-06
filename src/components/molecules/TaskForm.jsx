@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import Input from "@/components/atoms/Input";
 import TextArea from "@/components/atoms/TextArea";
 import Button from "@/components/atoms/Button";
-
 const TaskForm = ({ onSubmit, onCancel, loading = false, initialData = {}, mode = "create" }) => {
-  const [title, setTitle] = useState(initialData.title || "");
+const [title, setTitle] = useState(initialData.title || "");
   const [description, setDescription] = useState(initialData.description || "");
   const [dueDate, setDueDate] = useState(
     initialData.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : ""
   );
+  const [priority, setPriority] = useState(initialData.priority || "Medium");
   const [errors, setErrors] = useState({});
   const validateForm = () => {
     const newErrors = {};
@@ -40,13 +40,15 @@ try {
 await onSubmit({
         title: title.trim(),
         description: description.trim(),
-        dueDate: dueDate ? new Date(dueDate + "T23:59:59").toISOString() : null
+        dueDate: dueDate ? new Date(dueDate + "T23:59:59").toISOString() : null,
+        priority: priority
       });
       
       // Reset form only in create mode
       if (mode === "create") {
-        setTitle("");
+setTitle("");
         setDescription("");
+        setPriority("Medium");
         setErrors({});
       }
     } catch (error) {
@@ -115,7 +117,25 @@ const isFormValid = title.trim().length >= 2 && title.trim().length <= 100 && de
           min={new Date().toISOString().split('T')[0]}
           placeholder="Select due date..."
         />
+</div>
+
+      {/* Priority selector */}
+      <div className="space-y-2">
+        <label htmlFor="priority" className="block text-sm font-semibold text-gray-700">
+          Priority Level
+        </label>
+        <select
+          id="priority"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-white/80 backdrop-blur-sm"
+        >
+          <option value="High">High Priority</option>
+          <option value="Medium">Medium Priority</option>
+          <option value="Low">Low Priority</option>
+        </select>
       </div>
+
       <div className="flex gap-3 pt-2">
         <Button
           type="submit"
