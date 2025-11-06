@@ -31,7 +31,7 @@ const TaskCard = ({ task, onToggleComplete, onDelete, onEdit }) => {
       className={cn(
         "bg-white/70 backdrop-blur-sm rounded-2xl shadow-card p-6 border border-white/20",
         "hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200",
-        task.completed && "opacity-75"
+task.completed && "opacity-75"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -82,16 +82,30 @@ const TaskCard = ({ task, onToggleComplete, onDelete, onEdit }) => {
                 {task.description}
               </p>
             )}
-          </div>
+</div>
           
           {/* Task metadata */}
           <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
             <div className="flex items-center gap-1">
               <ApperIcon name="Calendar" size={12} />
               <span>
-                {new Date(task.createdAt).toLocaleDateString()}
+                Created {new Date(task.createdAt).toLocaleDateString()}
               </span>
             </div>
+            
+            {task.dueDate && (
+              <div className={`flex items-center gap-1 ${
+                new Date(task.dueDate) < new Date() && !task.completed
+                  ? "text-red-600 font-medium"
+                  : "text-blue-600"
+              }`}>
+                <ApperIcon name="Clock" size={12} />
+                <span>
+                  Due {new Date(task.dueDate).toLocaleDateString()}
+                  {new Date(task.dueDate) < new Date() && !task.completed && " (Overdue)"}
+                </span>
+              </div>
+            )}
             
             {task.completed && (
               <div className="flex items-center gap-1 text-green-600">

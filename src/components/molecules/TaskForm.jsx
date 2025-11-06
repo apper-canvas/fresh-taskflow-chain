@@ -6,8 +6,10 @@ import Button from "@/components/atoms/Button";
 const TaskForm = ({ onSubmit, onCancel, loading = false, initialData = {}, mode = "create" }) => {
   const [title, setTitle] = useState(initialData.title || "");
   const [description, setDescription] = useState(initialData.description || "");
+  const [dueDate, setDueDate] = useState(
+    initialData.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : ""
+  );
   const [errors, setErrors] = useState({});
-
   const validateForm = () => {
     const newErrors = {};
     
@@ -35,9 +37,10 @@ const TaskForm = ({ onSubmit, onCancel, loading = false, initialData = {}, mode 
     }
     
 try {
-      await onSubmit({
+await onSubmit({
         title: title.trim(),
-        description: description.trim()
+        description: description.trim(),
+        dueDate: dueDate ? new Date(dueDate + "T23:59:59").toISOString() : null
       });
       
       // Reset form only in create mode
@@ -64,9 +67,7 @@ try {
       setErrors({ ...errors, description: "" });
     }
   };
-
-  const isFormValid = title.trim().length >= 2 && title.trim().length <= 100 && description.trim().length <= 500;
-
+const isFormValid = title.trim().length >= 2 && title.trim().length <= 100 && description.trim().length <= 500;
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
@@ -96,8 +97,25 @@ try {
         <div className="text-xs text-gray-500 mt-1">
           {description.length}/500 characters
         </div>
+</div>
+
+      {/* Due Date Field */}
+      <div>
+        <label 
+          htmlFor="dueDate" 
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Due Date (Optional)
+        </label>
+        <Input
+          id="dueDate"
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          min={new Date().toISOString().split('T')[0]}
+          placeholder="Select due date..."
+        />
       </div>
-      
       <div className="flex gap-3 pt-2">
         <Button
           type="submit"

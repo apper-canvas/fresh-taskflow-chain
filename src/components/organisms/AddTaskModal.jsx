@@ -8,7 +8,7 @@ const AddTaskModal = ({ isOpen, onClose, onTaskAdded }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (taskData) => {
-    setLoading(true);
+setLoading(true);
     try {
       const newTask = await taskService.create(taskData);
       

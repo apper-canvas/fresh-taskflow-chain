@@ -12,9 +12,10 @@ const EditTaskModal = ({ isOpen, onClose, task, onTaskUpdated }) => {
     
     setLoading(true);
     try {
-      const updatedTask = await taskService.update(task.Id, {
+const updatedTask = await taskService.update(task.Id, {
         title: taskData.title,
-        description: taskData.description
+        description: taskData.description,
+        dueDate: taskData.dueDate
       });
       
       toast.success("Task updated successfully! ✨");
@@ -65,9 +66,10 @@ const EditTaskModal = ({ isOpen, onClose, task, onTaskUpdated }) => {
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           loading={loading}
-          initialData={{
+initialData={{
             title: task.title || "",
-            description: task.description || ""
+            description: task.description || "",
+            dueDate: task.dueDate
           }}
           mode="edit"
         />
