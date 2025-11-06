@@ -2,7 +2,6 @@ import mockTasks from "@/services/mockData/tasks.json";
 import { categoryService } from "@/services/api/categoryService";
 import React from "react";
 import Error from "@/components/ui/Error";
-
 // Simulate localStorage for persistent storage
 const STORAGE_KEY = "taskflow_tasks";
 
@@ -133,6 +132,48 @@ console.error("Error loading categories:", error);
     updatedTasks[taskIndex] = updatedTask;
     setStoredTasks(updatedTasks);
     
-    return { ...updatedTask };
+return { ...updatedTask };
+  },
+
+  // Filter tasks based on criteria
+  filterTasks(tasks, filterType) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    switch (filterType) {
+      case 'all':
+        return [...tasks];
+      
+      case 'active':
+        return tasks.filter(task => !task.completed);
+      
+      case 'completed':
+        return tasks.filter(task => task.completed);
+      
+      case 'due-today':
+        return tasks.filter(task => {
+          if (!task.dueDate) return false;
+          const taskDate = new Date(task.dueDate);
+          taskDate.setHours(0, 0, 0, 0);
+          return taskDate.getTime() === today.getTime();
+        });
+      
+      case 'overdue':
+        return tasks.filter(task => {
+          if (!task.dueDate || task.completed) return false;
+          const taskDate = new Date(task.dueDate);
+          taskDate.setHours(0, 0, 0, 0);
+          return taskDate.getTime() < today.getTime();
+        });
+      
+      case 'high-priority':
+        return tasks.filter(task => task.priority === 'High');
+      
+      default:
+        return [...tasks];
+    }
   }
 };
