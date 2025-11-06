@@ -1,4 +1,7 @@
 import mockTasks from "@/services/mockData/tasks.json";
+import { categoryService } from "@/services/api/categoryService";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 // Simulate localStorage for persistent storage
 const STORAGE_KEY = "taskflow_tasks";
@@ -53,6 +56,7 @@ async create(taskData) {
       description: taskData.description || "",
       dueDate: taskData.dueDate || null,
       priority: taskData.priority || "Medium",
+      categoryId: taskData.categoryId || null,
       completed: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -63,7 +67,7 @@ async create(taskData) {
     return { ...newTask };
   },
 
-  async update(id, updates) {
+async update(id, updates) {
     await delay(250);
     const tasks = getStoredTasks();
     const taskIndex = tasks.findIndex(t => t.Id === parseInt(id));
@@ -73,9 +77,10 @@ async create(taskData) {
     }
     
     const updatedTask = {
-...tasks[taskIndex],
+      ...tasks[taskIndex],
       ...updates,
       priority: updates.priority || tasks[taskIndex].priority,
+      categoryId: updates.categoryId !== undefined ? updates.categoryId : tasks[taskIndex].categoryId,
       updatedAt: new Date().toISOString()
     };
     
@@ -84,6 +89,16 @@ async create(taskData) {
     setStoredTasks(updatedTasks);
     
     return { ...updatedTask };
+  },
+
+  async getCategoriesWithTasks() {
+    try {
+      const categories = await categoryService.getAll();
+      return categories;
+    } catch (error) {
+console.error("Error loading categories:", error);
+      return [];
+    }
   },
 
   async delete(id) {

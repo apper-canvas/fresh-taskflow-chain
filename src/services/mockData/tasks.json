@@ -6,6 +6,7 @@
     "dueDate": "2024-01-20T23:59:59Z",
     "priority": "High",
     "completed": false,
+    "categoryId": 1,
     "createdAt": "2024-01-15T09:00:00Z",
     "updatedAt": "2024-01-15T09:00:00Z"
   },
@@ -16,6 +17,7 @@
     "dueDate": "2024-01-16T18:00:00Z",
     "priority": "Medium",
     "completed": true,
+    "categoryId": 4,
     "createdAt": "2024-01-14T08:30:00Z",
     "updatedAt": "2024-01-15T10:15:00Z"
   },
@@ -26,6 +28,7 @@
     "dueDate": "2024-01-12T17:00:00Z",
     "priority": "Medium",
     "completed": false,
+    "categoryId": 3,
     "createdAt": "2024-01-13T16:45:00Z",
     "updatedAt": "2024-01-13T16:45:00Z"
   },
@@ -36,6 +39,7 @@
     "dueDate": "2024-01-18T17:00:00Z",
     "priority": "High",
     "completed": false,
+    "categoryId": 1,
     "createdAt": "2024-01-15T11:20:00Z",
     "updatedAt": "2024-01-15T11:20:00Z"
   },
@@ -46,6 +50,7 @@
     "dueDate": null,
     "priority": "Low",
     "completed": false,
+    "categoryId": 5,
     "createdAt": "2024-01-12T14:30:00Z",
     "updatedAt": "2024-01-12T14:30:00Z"
   }

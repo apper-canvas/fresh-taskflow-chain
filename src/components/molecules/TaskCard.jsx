@@ -1,9 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/utils/cn";
+import { format } from "date-fns";
+import { categoryService } from "@/services/api/categoryService";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
+import { cn } from "@/utils/cn";
 
+const CategoryBadge = ({ categoryId }) => {
+  const [category, setCategory] = useState(null);
+
+  useEffect(() => {
+    const loadCategory = async () => {
+      if (categoryId) {
+        try {
+          const categoryData = await categoryService.getById(categoryId);
+          setCategory(categoryData);
+        } catch (error) {
+          console.error("Error loading category:", error);
+        }
+      }
+    };
+    loadCategory();
+  }, [categoryId]);
+
+  if (!category) return null;
+
+  const getCategoryColorClasses = (color) => {
+    const colorMap = {
+      blue: "bg-blue-100 text-blue-800 border-blue-200",
+      purple: "bg-purple-100 text-purple-800 border-purple-200",
+      green: "bg-green-100 text-green-800 border-green-200",
+      orange: "bg-orange-100 text-orange-800 border-orange-200",
+      teal: "bg-teal-100 text-teal-800 border-teal-200",
+      gray: "bg-gray-100 text-gray-800 border-gray-200"
+    };
+    return colorMap[color] || colorMap.gray;
+  };
+
+  return (
+    <div className={cn(
+      "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border",
+      getCategoryColorClasses(category.color)
+    )}>
+      <ApperIcon name="Tag" size={12} className="mr-1.5" />
+      {category.name}
+    </div>
+  );
+};
 const TaskCard = ({ task, onToggleComplete, onDelete, onEdit }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -83,20 +126,26 @@ className={cn(
               </p>
             )}
 </div>
-{/* Priority badge */}
-          <div className={cn(
-            "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold",
-            task.priority === "High" && "bg-red-100 text-red-800 border border-red-200",
-            task.priority === "Medium" && "bg-orange-100 text-orange-800 border border-orange-200",
-            task.priority === "Low" && "bg-green-100 text-green-800 border border-green-200"
-          )}>
+{/* Category and Priority badges */}
+          <div className="flex flex-wrap gap-2">
+            {task.categoryId && (
+              <CategoryBadge categoryId={task.categoryId} />
+            )}
+            {/* Priority badge */}
             <div className={cn(
-              "w-1.5 h-1.5 rounded-full mr-1.5",
-              task.priority === "High" && "bg-red-500",
-              task.priority === "Medium" && "bg-orange-500",
-              task.priority === "Low" && "bg-green-500"
-            )} />
-            {task.priority}
+              "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold",
+              task.priority === "High" && "bg-red-100 text-red-800 border border-red-200",
+              task.priority === "Medium" && "bg-orange-100 text-orange-800 border border-orange-200",
+              task.priority === "Low" && "bg-green-100 text-green-800 border border-green-200"
+            )}>
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full mr-1.5",
+                task.priority === "High" && "bg-red-500",
+                task.priority === "Medium" && "bg-orange-500",
+                task.priority === "Low" && "bg-green-500"
+              )} />
+              {task.priority}
+            </div>
           </div>
           
           {/* Task metadata */}

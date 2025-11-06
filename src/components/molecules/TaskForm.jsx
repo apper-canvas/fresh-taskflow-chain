@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import Input from "@/components/atoms/Input";
+import React, { useEffect, useState } from "react";
+import { categoryService } from "@/services/api/categoryService";
 import TextArea from "@/components/atoms/TextArea";
 import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 const TaskForm = ({ onSubmit, onCancel, loading = false, initialData = {}, mode = "create" }) => {
 const [title, setTitle] = useState(initialData.title || "");
   const [description, setDescription] = useState(initialData.description || "");
@@ -9,6 +10,8 @@ const [title, setTitle] = useState(initialData.title || "");
     initialData.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : ""
   );
   const [priority, setPriority] = useState(initialData.priority || "Medium");
+  const [categoryId, setCategoryId] = useState(initialData.categoryId || "");
+  const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
   const validateForm = () => {
     const newErrors = {};
@@ -41,19 +44,45 @@ await onSubmit({
         title: title.trim(),
         description: description.trim(),
         dueDate: dueDate ? new Date(dueDate + "T23:59:59").toISOString() : null,
-        priority: priority
+        priority: priority,
+        categoryId: categoryId ? parseInt(categoryId) : null
       });
       
       // Reset form only in create mode
       if (mode === "create") {
 setTitle("");
-        setDescription("");
+setDescription("");
         setPriority("Medium");
+        setCategoryId("");
         setErrors({});
       }
     } catch (error) {
-      console.error("Error submitting task:", error);
+      console.error("Error submitting form:", error);
     }
+  };
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoryData = await categoryService.getAll();
+        setCategories(categoryData);
+      } catch (error) {
+        console.error("Error loading categories:", error);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  const getCategoryColorClasses = (color) => {
+    const colorMap = {
+      blue: "bg-blue-100 text-blue-800 border-blue-200",
+      purple: "bg-purple-100 text-purple-800 border-purple-200",
+      green: "bg-green-100 text-green-800 border-green-200",
+      orange: "bg-orange-100 text-orange-800 border-orange-200",
+      teal: "bg-teal-100 text-teal-800 border-teal-200",
+      gray: "bg-gray-100 text-gray-800 border-gray-200"
+    };
+return colorMap[color] || colorMap.gray;
   };
 
   const handleTitleChange = (e) => {
@@ -135,7 +164,34 @@ const isFormValid = title.trim().length >= 2 && title.trim().length <= 100 && de
           <option value="Low">Low Priority</option>
         </select>
       </div>
-
+{/* Category Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Category
+            </label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white text-sm"
+            >
+              <option value="">No Category</option>
+              {categories.map((category) => (
+                <option key={category.Id} value={category.Id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            {categoryId && (
+              <div className="mt-2">
+                <span className="text-xs text-gray-500 mr-2">Preview:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${
+                  getCategoryColorClasses(categories.find(c => c.Id === parseInt(categoryId))?.color || 'gray')
+                }`}>
+                  {categories.find(c => c.Id === parseInt(categoryId))?.name || 'Unknown'}
+                </span>
+              </div>
+            )}
+          </div>
       <div className="flex gap-3 pt-2">
         <Button
           type="submit"
